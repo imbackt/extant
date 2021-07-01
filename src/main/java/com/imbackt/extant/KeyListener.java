@@ -1,4 +1,4 @@
-package com.imbackt;
+package com.imbackt.extant;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;

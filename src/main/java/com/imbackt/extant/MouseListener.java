@@ -1,6 +1,4 @@
-package com.imbackt;
-
-import org.lwjgl.glfw.GLFWErrorCallback;
+package com.imbackt.extant;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
