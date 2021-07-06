@@ -5,7 +5,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class KeyListener {
     private static KeyListener INSTANCE;
-    private boolean keyPressed[] = new boolean[350];
+    private boolean[] keyPressed = new boolean[350];
 
     private KeyListener() {
     }

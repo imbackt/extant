@@ -25,20 +25,18 @@ public class Window {
         this.width = 1280;
         this.height = 720;
         this.title = "Extant";
-        r = 1;
-        g = 1;
-        b = 1;
-        a = 1;
+        r = g = b = a = 1;
     }
 
     public static void changeScene(int newScene) {
         switch (newScene) {
             case 0:
                 currentScene = new LevelEditorScene();
-                //currentScene.init();
+                currentScene.init();
                 break;
             case 1:
                 currentScene = new LevelScene();
+                currentScene.init();
                 break;
             default:
                 assert false : "Unknown scene '" + newScene + "'";
@@ -97,7 +95,7 @@ public class Window {
         glfwMakeContextCurrent(glfwWindow);
 
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         // Make the window visible
         glfwShowWindow(glfwWindow);

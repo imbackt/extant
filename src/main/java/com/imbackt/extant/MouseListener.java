@@ -5,22 +5,16 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener {
     private static MouseListener INSTANCE;
-    private double scrollX;
-    private double scrollY;
-    private double xPosition;
-    private double yPosition;
-    private double lastX;
-    private double lastY;
-    private boolean mouseButtonPressed[] = new boolean[3];
+    private double scrollX, scrollY;
+    private double xPosition, yPosition;
+    private double lastX, lastY;
+    private boolean[] mouseButtonPressed = new boolean[3];
     private boolean isDragging;
 
     private MouseListener() {
-        this.scrollX = 0.0;
-        this.scrollY = 0.0;
-        this.xPosition = 0.0;
-        this.yPosition = 0.0;
-        this.lastX = 0.0;
-        this.lastY = 0.0;
+        scrollX = scrollY = 0.0;
+        xPosition = yPosition = 0.0;
+        lastX = lastY = 0.0;
     }
 
     public static MouseListener getInstance() {
