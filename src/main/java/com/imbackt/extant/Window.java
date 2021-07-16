@@ -22,8 +22,8 @@ public class Window {
     private static Scene currentScene;
 
     private Window() {
-        this.width = 1280;
-        this.height = 720;
+        this.width = 1920;
+        this.height = 1080;
         this.title = "Extant";
         r = g = b = a = 1;
     }
@@ -78,7 +78,7 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        //glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // Create the window
         glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
