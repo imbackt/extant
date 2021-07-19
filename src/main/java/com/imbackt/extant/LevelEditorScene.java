@@ -1,6 +1,7 @@
 package com.imbackt.extant;
 
 import com.imbackt.extant.renderer.Shader;
+import com.imbackt.extant.renderer.Texture;
 import com.imbackt.extant.util.Time;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
@@ -14,36 +15,12 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class LevelEditorScene extends Scene {
 
-    private final String vertexSharerSrc = "#version 330 core\n" +
-            "layout (location=0) in vec3 aPos;\n" +
-            "layout (location=1) in vec4 aColor;\n" +
-            "\n" +
-            "out vec4 fColor;\n" +
-            "\n" +
-            "void main()\n" +
-            "{\n" +
-            "    fColor = aColor;\n" +
-            "    gl_Position = vec4(aPos, 1.0);\n" +
-            "}";
-
-    private final String fragmentShaderSrc = "#version 330 core\n" +
-            "\n" +
-            "in vec4 fColor;\n" +
-            "\n" +
-            "out vec4 color;\n" +
-            "void main()\n" +
-            "{\n" +
-            "    color = fColor;\n" +
-            "}";
-
-    private int vertexID, fragmentID, shaderProgram;
-
     private final float[] vertexArray = {
-            // position             // color
-            100.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Bottom right 0
-            0.5f, 100.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // Top left     1
-            100.5f, 100.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top right    2
-            0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom left  3
+            // position             // color          // uv coordinates
+            100f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom right 0
+            0.0f, 100f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Top left     1
+            100f, 100f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Top right    2
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, // Bottom left  3
     };
 
     // IMPORTANT: Must be in counter-clockwise order
@@ -52,18 +29,20 @@ public class LevelEditorScene extends Scene {
             0, 1, 3  // Bottom right triangle
     };
 
-    private int vaoID, vboID, eboID;
+    private int vaoID;
 
     private Shader defaultShader;
+    private Texture testTexture;
 
     public LevelEditorScene() {
     }
 
     @Override
     public void init() {
-        this.camera = new Camera(new Vector2f());
+        camera = new Camera(new Vector2f(-200f, -300f));
         defaultShader = new Shader("assets/shaders/default.glsl");
         defaultShader.compile();
+        testTexture = new Texture("assets/images/testImage.jpg");
 
         // ==========================================================
         // Generate VAO, VBO and EBO buffer objects and send to GPY
@@ -76,8 +55,8 @@ public class LevelEditorScene extends Scene {
         vertexBuffer.put(vertexArray).flip();
 
         // Create VBO upload the vertex buffer
-        vboID = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vaoID);
+        int vboID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 
         // Create the indices and upload
@@ -85,27 +64,34 @@ public class LevelEditorScene extends Scene {
         elementBuffer.put(elementArray).flip();
 
         // Create EBO
-        eboID = glGenBuffers();
+        int eboID = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
 
         // Add the vertex attribute pointers
         int positionsSize = 3;
         int colorSize = 4;
-        int vertexSizeBytes = (positionsSize + colorSize) * Float.BYTES;
+        int uvSize = 2;
+        int vertexSizeBytes = (positionsSize + colorSize + uvSize) * Float.BYTES;
         glVertexAttribPointer(0, positionsSize, GL_FLOAT, false, vertexSizeBytes, 0);
         glEnableVertexAttribArray(0);
 
         glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, positionsSize * Float.BYTES);
         glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(2, uvSize, GL_FLOAT, false, vertexSizeBytes, (positionsSize + colorSize) * Float.BYTES);
+        glEnableVertexAttribArray(2);
     }
 
     @Override
     public void update(float dt) {
-        camera.position.x -= dt * 50.0f;
-        camera.position.y -= dt * 20.0f;
-
         defaultShader.use();
+
+        // Upload texture to shader
+        defaultShader.uploadTexture("TEXT_SAMPLER", 0);
+        glActiveTexture(GL_TEXTURE0);
+        testTexture.bind();
+
         defaultShader.uploadMat4f("uProjection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("uView", camera.getViewMatrix());
         defaultShader.uploadFloat("uTime", Time.getTime());
