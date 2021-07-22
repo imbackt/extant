@@ -1,5 +1,7 @@
 package com.imbackt.extant;
 
+import com.imbackt.extant.component.FontRenderer;
+import com.imbackt.extant.component.SpriteRenderer;
 import com.imbackt.extant.renderer.Shader;
 import com.imbackt.extant.renderer.Texture;
 import com.imbackt.extant.util.Time;
@@ -34,15 +36,24 @@ public class LevelEditorScene extends Scene {
     private Shader defaultShader;
     private Texture testTexture;
 
+    GameObject testObj;
+    private boolean firstTime = false;
+
     public LevelEditorScene() {
     }
 
     @Override
     public void init() {
+        System.out.println("Creating 'test object'");
+        testObj = new GameObject("test object");
+        testObj.addComponent(new SpriteRenderer());
+        testObj.addComponent(new FontRenderer());
+        addGameObjectToScene(testObj);
+
         camera = new Camera(new Vector2f(-200f, -300f));
         defaultShader = new Shader("assets/shaders/default.glsl");
         defaultShader.compile();
-        testTexture = new Texture("assets/images/testImage.jpg");
+        testTexture = new Texture("assets/images/testImage.png");
 
         // ==========================================================
         // Generate VAO, VBO and EBO buffer objects and send to GPY
@@ -112,5 +123,17 @@ public class LevelEditorScene extends Scene {
         glBindVertexArray(0);
 
         defaultShader.detach();
+
+        if (!firstTime) {
+            System.out.println("Creating gameObject!!");
+            GameObject go = new GameObject("Game test 2");
+            go.addComponent(new SpriteRenderer());
+            addGameObjectToScene(go);
+            firstTime = true;
+        }
+
+        for (GameObject gameObject : gameObjects) {
+            gameObject.update(dt);
+        }
     }
 }
